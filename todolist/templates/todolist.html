@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Task Mate
+{% endblock title %}
+
+
+{% block content %}
+    <form class="mt-3 row" method="post">
+        {% csrf_token %}
+        <input name="task" id="name" class="ml-md-1 form-control col-md-9" placeholder="New Task"/>
+        <button type="submit" class="btn btn-primary col-md-2">Add Task</button>
+        {% if tasks %}
+            <table class="table table-bordered mt-3">
+                <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Task</th>
+                    <th>Done</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for task in tasks %}
+                    <tr class="{% if task.done %} table-success{% endif %} ">
+                        <th scope="row">{{ forloop.counter }}</th>
+                        <td>{{ task.task }}</td>
+                        <td>{% if task.done %}Completed{% else %}Not Completed{% endif %}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary">edit</button>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+                                    data-target="#deleteTaskModal-{{ task.id }}">
+                                delete
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="deleteTaskModal-{{ task.id }}" tabindex="-1" role="dialog"
+                                 aria-labelledby="deleteTaskModal-{{ task.id }}Label"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteTaskModal-{{ task.id }}Label">Are you
+                                                sure?</h5>
+                                            <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Delete Task "{{ task.task }}"
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                No, cancel
+                                            </button>
+                                            <a href="{% url 'delete_task' id=task.id %}" class="btn btn-danger">Yes,
+                                                delete task</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+            </table>
+
+
+        {% else %}
+            <h3 class="mt-3">There are not tasks yet.</h3>
+        {% endif %}
+
+{% endblock content %}
